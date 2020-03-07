@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import AuthView from './modules/auth/views/AuthView.vue';
+import { routes as authRoutes } from './modules/auth';
 
 Vue.use(VueRouter);
 
@@ -11,11 +11,7 @@ const routes = [
     name: 'home',
     redirect: '/auth',
   },
-  {
-    path: '/auth',
-    name: 'auth',
-    component: AuthView,
-  },
+  ...authRoutes,
 ];
 
 const router = new VueRouter({
