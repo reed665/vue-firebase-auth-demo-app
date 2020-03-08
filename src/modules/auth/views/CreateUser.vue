@@ -9,6 +9,7 @@
         <span class="label-text">Email</span>
 
         <input
+          v-model="email"
           required
           type="email"
         >
@@ -18,6 +19,7 @@
         <span class="label-text">Password</span>
 
         <input
+          v-model="password"
           required
           type="password"
         >
@@ -28,6 +30,13 @@
       </div>
     </form>
 
+    <p
+      v-if="errorMessage"
+      class="error-message"
+    >
+      {{ errorMessage }}
+    </p>
+
     <p>
       Or <router-link :to="{ name: 'signin' }">Sign In</router-link> instead
     </p>
@@ -35,15 +44,29 @@
 </template>
 
 <script>
-// import {} from '@vue/composition-api';
+import { ref } from '@vue/composition-api';
+import firebase from '@/firebase';
 
 export default {
-  setup() {
-    const submit = (event) => {
-      console.log(event);
+  setup(props, context) {
+    const email = ref('');
+    const password = ref('');
+    const errorMessage = ref('');
+
+    const submit = () => {
+      firebase.auth().createUserWithEmailAndPassword(email.value, password.value)
+        .then(() => {
+          context.root.$router.push({ name: 'home' });
+        })
+        .catch((error) => {
+          errorMessage.value = error.message;
+        });
     };
 
     return {
+      email,
+      password,
+      errorMessage,
       submit,
     };
   },
@@ -62,5 +85,9 @@ form {
   margin: 5px 0;
   display: flex;
   flex-direction: column;
+}
+
+.error-message {
+  color: red;
 }
 </style>
