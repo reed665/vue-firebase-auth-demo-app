@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-
-import AuthView from './modules/auth/views/AuthView.vue';
+import { useUser } from './modules/user';
+import { HomeView } from './modules/home';
+import { routes as authRoutes } from './modules/auth';
 
 Vue.use(VueRouter);
 
@@ -9,13 +10,18 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    redirect: '/auth',
+    component: HomeView,
+    beforeEnter: (to, from, next) => {
+      const { user } = useUser();
+
+      if (user.value) {
+        next();
+      } else {
+        next({ name: 'sign-in' });
+      }
+    },
   },
-  {
-    path: '/auth',
-    name: 'auth',
-    component: AuthView,
-  },
+  ...authRoutes,
 ];
 
 const router = new VueRouter({

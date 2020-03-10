@@ -1,14 +1,36 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">
-        Home
-      </router-link>
-    </div>
-
     <router-view />
   </div>
 </template>
+
+<script>
+import firebase from './firebase';
+import { useUser } from './modules/user';
+
+export default {
+  setup(props, context) {
+    const { setUser } = useUser();
+
+    firebase.auth().onAuthStateChanged((user) => {
+      setUser(user);
+
+      const routeName = context.root.$route.name;
+
+      if (user && (routeName !== 'home')) {
+        context.root.$router.push({ name: 'home' });
+        return;
+      }
+
+      const legitRoutes = ['sign-in', 'create-user'];
+      if (!user && !legitRoutes.includes(routeName)) {
+        context.root.$router.push({ name: 'sign-in' });
+      }
+    });
+  },
+
+};
+</script>
 
 <style>
 #app {
@@ -16,18 +38,5 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
 }
 </style>
