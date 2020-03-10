@@ -38,7 +38,7 @@
     </p>
 
     <p>
-      Or <router-link :to="{ name: 'signin' }">Sign In</router-link> instead
+      Or <router-link :to="{ name: 'sign-in' }">Sign In</router-link> instead
     </p>
   </div>
 </template>
@@ -48,16 +48,13 @@ import { ref } from '@vue/composition-api';
 import firebase from '@/firebase';
 
 export default {
-  setup(props, context) {
+  setup() {
     const email = ref('');
     const password = ref('');
     const errorMessage = ref('');
 
     const submit = () => {
       firebase.auth().createUserWithEmailAndPassword(email.value, password.value)
-        .then(() => {
-          context.root.$router.push({ name: 'home' });
-        })
         .catch((error) => {
           errorMessage.value = error.message;
         });
