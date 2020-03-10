@@ -19,6 +19,7 @@ export default {
 
       if (user && (routeName !== 'home')) {
         context.root.$router.push({ name: 'home' });
+        return;
       }
 
       const legitRoutes = ['sign-in', 'create-user'];
